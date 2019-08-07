@@ -2,7 +2,7 @@ defmodule GrpcBuilder.Client.Builder do
   @moduledoc """
   Macro for building RPC easily
   """
-  alias GrpcBuilder.Client.{Helper, RpcConn}
+  alias GrpcBuilder.Client.Helper
 
   defmacro rpc(service, options, contents \\ []) do
     compile(service, options, contents)
@@ -22,7 +22,7 @@ defmodule GrpcBuilder.Client.Builder do
           raise ArgumentError, message: "expected :do to be given as option"
       end
 
-    mod = to_request_mod(service, options[:prefix])
+    mod = to_request_mod(service, Macro.to_string(options[:prefix]))
 
     quote bind_quoted: [
             mod: mod,
@@ -35,7 +35,7 @@ defmodule GrpcBuilder.Client.Builder do
       cond do
         options[:request_stream] == true ->
           def unquote(service)(reqs, name \\ "", opts \\ []) do
-            conn = RpcConn.get_conn(name)
+            conn = Helper.get_conn(name)
             reqs = Helper.to_req(reqs, unquote(mod))
             fun = fn var!(res) -> unquote(body) end
             opts = Keyword.merge(unquote(default_opts), opts)
@@ -44,7 +44,7 @@ defmodule GrpcBuilder.Client.Builder do
 
         options[:response_stream] == true and options[:no_params] == true ->
           def unquote(service)(name \\ "", opts \\ []) do
-            conn = RpcConn.get_conn(name)
+            conn = Helper.get_conn(name)
             req = apply(unquote(mod), :new, [])
             fun = fn var!(res) -> unquote(body) end
             opts = Keyword.merge(unquote(default_opts), opts)
@@ -53,7 +53,7 @@ defmodule GrpcBuilder.Client.Builder do
 
         options[:response_stream] == true ->
           def unquote(service)(req, name \\ "", opts \\ []) do
-            conn = RpcConn.get_conn(name)
+            conn = Helper.get_conn(name)
             req = Helper.to_req(req, unquote(mod))
             fun = fn var!(res) -> unquote(body) end
             opts = Keyword.merge(unquote(default_opts), opts)
@@ -62,7 +62,7 @@ defmodule GrpcBuilder.Client.Builder do
 
         options[:no_params] == true ->
           def unquote(service)(name \\ "", opts \\ []) do
-            conn = RpcConn.get_conn(name)
+            conn = Helper.get_conn(name)
             req = apply(unquote(mod), :new, [])
             fun = fn var!(res) -> unquote(body) end
             opts = Keyword.merge(unquote(default_opts), opts)
@@ -71,7 +71,7 @@ defmodule GrpcBuilder.Client.Builder do
 
         true ->
           def unquote(service)(req, name \\ "", opts \\ []) do
-            conn = RpcConn.get_conn(name)
+            conn = Helper.get_conn(name)
             req = Helper.to_req(req, unquote(mod))
             fun = fn var!(res) -> unquote(body) end
             opts = Keyword.merge(unquote(default_opts), opts)

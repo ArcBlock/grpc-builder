@@ -1,6 +1,6 @@
 defmodule GrpcBuilder.Client.Conn do
   @moduledoc """
-  Wrapper for ForgeSdk gRPC connection
+  Wrapper for gRPC connection
   """
   use TypedStruct
   alias GRPC.Channel
@@ -17,7 +17,7 @@ end
 
 defmodule GrpcBuilder.Client.RpcConn do
   @moduledoc """
-  Persistent gRPC connection to Forge GRPC server.
+  Persistent gRPC connection to GRPC server.
   """
   use Connection
 
@@ -46,21 +46,6 @@ defmodule GrpcBuilder.Client.RpcConn do
   @spec get_conn(atom()) :: Conn.t() | {:error, :closed}
   def get_conn(name) do
     Connection.call(name, :get_conn)
-  end
-
-  @spec get_config(atom()) :: String.t() | {:error, :closed}
-  def get_config(name) do
-    Connection.call(name, :get_config)
-  end
-
-  @spec update_config(atom(), String.t()) :: any()
-  def update_config(name, config) do
-    Connection.cast(name, {:update_config, config})
-  end
-
-  @spec update_gas(atom()) :: any()
-  def update_gas(name) do
-    Connection.cast(name, :update_gas)
   end
 
   @spec close(atom()) :: any()

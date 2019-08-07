@@ -1,20 +1,30 @@
-defmodule ForgeSdk.Rpc.Helper do
+defmodule GrpcBuilder.Client.Helper do
   @moduledoc false
 
   require Logger
-
-  alias ForgeSdk.Rpc.Stub, as: ForgeRpc
   alias GRPC.Stub, as: Client
+  alias GrpcBuilder.Client.RpcConn
+  alias GrpcBuilder.Client.Stub, as: RpcStub
 
   @recv_timeout 10_000
   @deadline_expired 4
+
+  @doc """
+  Get the gRPC connection channel.
+  """
+  @spec get_conn(String.t() | atom()) :: Conn.t()
+  def get_conn(name \\ "")
+
+  def get_conn(""), do: get_conn(Application.get_env(:grpc_builder, :default_conn))
+  def get_conn(name) when is_binary(name), do: get_conn(String.to_existing_atom(name))
+  def get_conn(name), do: RpcConn.get_conn(name)
 
   @doc """
   Send a single request to GRPC server.
   """
   def send(service, conn, req, opts, fun) do
     grpc_opts = get_grpc_opts(opts)
-    data = apply(ForgeRpc, service, [conn.chan, req, grpc_opts])
+    data = apply(RpcStub, service, [conn.chan, req, grpc_opts])
 
     case data do
       {:ok, res} ->
@@ -63,7 +73,7 @@ defmodule ForgeSdk.Rpc.Helper do
   def to_req(reqs, mod), do: Enum.map(reqs, &to_req(&1, mod))
 
   # private function
-  defp get_stream(service, conn, opts), do: apply(ForgeRpc, service, [conn.chan, opts])
+  defp get_stream(service, conn, opts), do: apply(RpcStub, service, [conn.chan, opts])
 
   defp recv(stream, opts, fun) do
     case Client.recv(stream, timeout: @recv_timeout) do

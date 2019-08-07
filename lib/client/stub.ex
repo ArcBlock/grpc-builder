@@ -1,12 +1,17 @@
-defmodule GrpcBuilder.Client.Stub do
+defmodule GrpcBuilder.Client.StubGen do
   @moduledoc """
   Aggregate all RPCs
   """
-  def gen(services) do
-    Enum.each(services, fn {name, mod} ->
-      quote do
-        defdelegate unquote(name)(chan, req, opts \\ []), to: unquote(mod)
-      end
-    end)
+  defmacro __using__(opts) do
+    gen(opts)
+  end
+
+  defp gen(args) do
+    quote bind_quoted: [args: args] do
+      Enum.each(args[:services], fn {name, mod} ->
+        def unquote(name)(chan, req, opts \\ []),
+          do: apply(unquote(mod), unquote(name), [chan, req, opts])
+      end)
+    end
   end
 end
