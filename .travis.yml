@@ -1,7 +1,7 @@
 language: elixir
 dist: xenial
 elixir: 1.9.1
-otp_release: 22
+otp_release: 22.0
 branches:
   only:
     - master
@@ -19,7 +19,7 @@ deploy:
   - provider: releases
     skip_cleanup: true
     api_key:
-      secure: ge0UU1+VDmvefZVFji+W6TMZ5+83/4cm0bcjyFZxlReRVtZUgiPsArdJVwX1udm7r4gdq1SwbnTnyB0R4No0H9gPaC6L0jBetz8FPeMAxbAB4aLaZkjnlXwLY5eeVFP9dbYCO85WStSRdkoRiDKxw/mxBIRN1enoEolb6UUVm41MDfPHopv7zWpHMTZ9KsCRx+O0cyvp2mfw2PNljt6rSFMev2+1rqTyY9TPGnr0XIF1/x5tScYg0j3RuNgDFBlMi+C8tnHTdehWmat7XAku9dLDipaZDOKyhpN2WBlQaSju/dZ5DkeJ/eZqU+qTHJGhx/icYZEJgwNm1OeElIVV2jfWFzlfT3R29DNqc//a5JIzlSVxIoystkRYONQoiQn/Y82KJOKM6N5Jxx3Ism77XVD/5aKhkLZ8eqh08cOGkLUcO0iNElF06vxdi2/e+llh3cztVME/0vSQPTlDPTSmpoU0OKUP8+31MIuzkWvovfi5v5FybyrRI/D3bJfzLn1gYzMvT8yFYiX7ZOFaiHRGWRyRTTUNuPckVbZjGAuJ+/RkGU6RJiBQieR8RDChKs2OOD5jEDZcVmZdtejB7ZJ4GeqG8xn1Cvuml2088dwUfb8r1fUcXRb7z48IzZKJT8N+GlrmIUomBIU0hEqbSDv65nQG/9k3Ipocg/bKYxO6k6g=
+      secure: Tt1+JE+0SoW976670Q52ur30syqzXRxdxMAtLh30sFo1E6eHih0LYZlWEO8nUW3CCFTTD77hDfH+2M/iSHBqtHq2hNfuXsvrbhoXO/KRwuHkC0EMsQaQCrbQ9l5csAZ7AB/p5hqdeasy8lBUE/JsdJzuKDC23MGjA7k9owtD0t31BqOUVlKC8UdBR3f0zn8LAzkTw2H4jCUfOEmqjoGwggs10CSGGVATyo+so0q0/8up6JDM/adrSKwg7QUMGHhZQdK2DbN3BSpE3ycBaKLbwUkuzRj0WqRGqWGDy3cdS2W809RCcmDlax00UoZr4kLS4qhQdTwgcAss+o4nnPo5qEpIUaVcYwtl0ymFMezl5L3erUR0V03R0+pKJBgeQhaj5v1TzzLptgpE4C0x1UpbfVARxYxtzCNJQjbMYxoAs2uuGTJLfMiEFeccmkK9SYTKbd95Xy3uzYBEt3gEKTUli8KrGPmE8v+kYawsdzBxSfzuMHdQbqmYPsb5UV1Bnpp08GTV/mtJqKgToxtT/JkMmOJ5eLVKh8WRA2fFOd9vglm0bv1fx09LSNGn4xfANYcM3xnQew/PTWBW0KyvH4vyR/aVYAqVW4VzHl64nruz0+yl1WwnoUx3kawVMNIs7J+9POkiwN66TOQMSJqtKXLXq/6NOMpi5iHgW5e0WFoSN1E=
     on:
       repo: ArcBlock/grpc-builder
       branch: master
