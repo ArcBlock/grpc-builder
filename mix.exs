@@ -66,7 +66,6 @@ defmodule GrpcBuilder.MixProject do
   defp package do
     [
       files: [
-        "config",
         "lib",
         "mix.exs",
         "README*",
