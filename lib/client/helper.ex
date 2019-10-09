@@ -12,12 +12,15 @@ defmodule GrpcBuilder.Client.Helper do
   @doc """
   Get the gRPC connection channel.
   """
-  @spec get_conn(String.t() | atom()) :: Conn.t()
-  def get_conn(name \\ "")
+  @spec get_conn(atom(), String.t() | atom()) :: Conn.t()
+  def get_conn(rpc_app, name \\ "")
 
-  def get_conn(""), do: get_conn(Application.get_env(:grpc_builder, :default_conn))
-  def get_conn(name) when is_binary(name), do: get_conn(String.to_existing_atom(name))
-  def get_conn(name), do: RpcConn.get_conn(name)
+  def get_conn(rpc_app, ""), do: get_conn(rpc_app, Application.get_env(rpc_app, :default_conn))
+
+  def get_conn(rpc_app, name) when is_binary(name),
+    do: get_conn(rpc_app, String.to_existing_atom(name))
+
+  def get_conn(_rpc_app, name), do: RpcConn.get_conn(name)
 
   @doc """
   Send a single request to GRPC server.
