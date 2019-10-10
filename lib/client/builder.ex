@@ -47,7 +47,7 @@ defmodule GrpcBuilder.Client.Builder do
             reqs = Helper.to_req(reqs, unquote(mod))
             fun = fn var!(res) -> unquote(body) end
             opts = Keyword.merge(unquote(default_opts), opts)
-            Helper.send_stream(unquote(service), conn, reqs, opts, fun)
+            Helper.send_stream(unquote(rpc_app), unquote(service), conn, reqs, opts, fun)
           end
 
         options[:response_stream] == true and options[:no_params] == true ->
@@ -56,7 +56,7 @@ defmodule GrpcBuilder.Client.Builder do
             req = apply(unquote(mod), :new, [])
             fun = fn var!(res) -> unquote(body) end
             opts = Keyword.merge(unquote(default_opts), opts)
-            Helper.send(unquote(service), conn, req, opts, fun)
+            Helper.send(unquote(rpc_app), unquote(service), conn, req, opts, fun)
           end
 
         options[:response_stream] == true ->
@@ -65,7 +65,7 @@ defmodule GrpcBuilder.Client.Builder do
             req = Helper.to_req(req, unquote(mod))
             fun = fn var!(res) -> unquote(body) end
             opts = Keyword.merge(unquote(default_opts), opts)
-            Helper.send(unquote(service), conn, req, opts, fun)
+            Helper.send(unquote(rpc_app), unquote(service), conn, req, opts, fun)
           end
 
         options[:no_params] == true ->
@@ -74,7 +74,7 @@ defmodule GrpcBuilder.Client.Builder do
             req = apply(unquote(mod), :new, [])
             fun = fn var!(res) -> unquote(body) end
             opts = Keyword.merge(unquote(default_opts), opts)
-            Helper.send(unquote(service), conn, req, opts, fun)
+            Helper.send(unquote(rpc_app), unquote(service), conn, req, opts, fun)
           end
 
         true ->
@@ -83,7 +83,7 @@ defmodule GrpcBuilder.Client.Builder do
             req = Helper.to_req(req, unquote(mod))
             fun = fn var!(res) -> unquote(body) end
             opts = Keyword.merge(unquote(default_opts), opts)
-            Helper.send(unquote(service), conn, req, opts, fun)
+            Helper.send(unquote(rpc_app), unquote(service), conn, req, opts, fun)
           end
       end
     end

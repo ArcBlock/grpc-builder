@@ -4,7 +4,6 @@ defmodule GrpcBuilder.Client.Helper do
   require Logger
   alias GRPC.Stub, as: Client
   alias GrpcBuilder.Client.RpcConn
-  alias GrpcBuilder.Client.Stub, as: RpcStub
 
   @recv_timeout 10_000
   @deadline_expired 4
@@ -25,9 +24,10 @@ defmodule GrpcBuilder.Client.Helper do
   @doc """
   Send a single request to GRPC server.
   """
-  def send(service, conn, req, opts, fun) do
+  def send(rpc_app, service, conn, req, opts, fun) do
+    mod = get_stub_mod(rpc_app)
     grpc_opts = get_grpc_opts(opts)
-    data = apply(RpcStub, service, [conn.chan, req, grpc_opts])
+    data = apply(mod, service, [conn.chan, req, grpc_opts])
 
     case data do
       {:ok, res} ->
@@ -47,13 +47,13 @@ defmodule GrpcBuilder.Client.Helper do
   @doc """
   Send multiple requests to GRPC server one by one.
   """
-  def send_stream(service, conn, reqs, opts, fun) when is_list(reqs) do
-    stream = get_stream(service, conn, opts)
+  def send_stream(rpc_app, service, conn, reqs, opts, fun) when is_list(reqs) do
+    stream = get_stream(rpc_app, service, conn, opts)
     do_send_stream(stream, reqs, opts, fun)
   end
 
-  def send_stream(service, conn, req, opts, fun) do
-    stream = get_stream(service, conn, opts)
+  def send_stream(rpc_app, service, conn, req, opts, fun) do
+    stream = get_stream(rpc_app, service, conn, opts)
 
     stream
     |> do_send_stream([req], opts, fun)
@@ -76,7 +76,11 @@ defmodule GrpcBuilder.Client.Helper do
   def to_req(reqs, mod), do: Enum.map(reqs, &to_req(&1, mod))
 
   # private function
-  defp get_stream(service, conn, opts), do: apply(RpcStub, service, [conn.chan, opts])
+  defp get_stub_mod(rpc_app),
+    do: rpc_app |> Atom.to_string() |> Recase.to_pascal() |> Module.concat("Client.Stub")
+
+  defp get_stream(rpc_app, service, conn, opts),
+    do: apply(get_stub_mod(rpc_app), service, [conn.chan, opts])
 
   defp recv(stream, opts, fun) do
     case Client.recv(stream, timeout: @recv_timeout) do

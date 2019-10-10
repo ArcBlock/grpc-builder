@@ -1,3 +1,6 @@
+## 0.3.1-alpha (October 10, 2019)
+  - fix stub namespace
+
 ## 0.3.0-alpha (October 09, 2019)
 - allow multiple supervisor
 
