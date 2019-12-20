@@ -1,3 +1,6 @@
+## 0.3.2-alpha (December 19, 2019)
+  - push req to res so that the code block in rpc body could access req
+
 ## 0.3.1-alpha (October 10, 2019)
   - fix stub namespace
 

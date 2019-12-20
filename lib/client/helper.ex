@@ -31,7 +31,7 @@ defmodule GrpcBuilder.Client.Helper do
 
     case data do
       {:ok, res} ->
-        process_response(res, opts, fun)
+        process_response(req, res, opts, fun)
 
       {:error, msg} ->
         Logger.warn(
@@ -82,10 +82,10 @@ defmodule GrpcBuilder.Client.Helper do
   defp get_stream(rpc_app, service, conn, opts),
     do: apply(get_stub_mod(rpc_app), service, [conn.chan, opts])
 
-  defp recv(stream, opts, fun) do
+  defp recv(req, stream, opts, fun) do
     case Client.recv(stream, timeout: @recv_timeout) do
       {:ok, res} ->
-        process_response(res, opts, fun)
+        process_response(req, res, opts, fun)
 
       {:error, msg} ->
         Logger.warn(
@@ -96,19 +96,24 @@ defmodule GrpcBuilder.Client.Helper do
     end
   end
 
-  defp process_response(%{code: :ok} = res, _opts, fun), do: fun.(res)
-  defp process_response(%{code: code}, _opts, _fun), do: {:error, code}
+  defp process_response(req, %{code: :ok} = res, _opts, fun) do
+    data = Map.from_struct(res)
 
-  defp process_response(res_stream, opts, fun) do
+    fun.(Map.put(data, :req, req))
+  end
+
+  defp process_response(_req, %{code: code}, _opts, _fun), do: {:error, code}
+
+  defp process_response(req, res_stream, opts, fun) do
     mod = if opts[:stream_mode] == true, do: Stream, else: Enum
 
     mod.map(res_stream, fn
       {:ok, res} ->
-        process_response(res, opts, fun)
+        process_response(req, res, opts, fun)
 
       {:error, %{status: @deadline_expired}} ->
         Logger.warn("Deadline expired for the stream.")
-        process_response(%{code: :timeout}, opts, fun)
+        process_response(req, %{code: :timeout}, opts, fun)
 
       {:error, msg} ->
         Logger.warn("Failed to process response.  Error: #{inspect(msg)}")
@@ -118,7 +123,7 @@ defmodule GrpcBuilder.Client.Helper do
 
   defp do_send_stream(stream, [req], opts, fun) do
     Client.send_request(stream, req, end_stream: true)
-    recv(stream, opts, fun)
+    recv(req, stream, opts, fun)
   end
 
   defp do_send_stream(stream, [req | rest], opts, fun) do
